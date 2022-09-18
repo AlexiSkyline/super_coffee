@@ -6,6 +6,7 @@ import com.super_coffee.app.repository.IUserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +18,7 @@ public class UserServiceImpl implements IUserService {
     private final IRoleService roleService;
 
     @Override
+    @Transactional
     public User save( User user ) {
         Optional<Role> role = this.roleService.findByDescription( "USER_ROLE" );
         role.ifPresent( value -> user.setRoles( List.of(value) ) );
@@ -26,8 +28,15 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    @Transactional( readOnly = true )
     public List<User> findAll() {
         return this.userRepository.findAll();
+    }
+
+    @Override
+    @Transactional( readOnly = true )
+    public Optional<User> findByEmail( String email ) {
+        return this.userRepository.findByEmail( email );
     }
 
     @Override

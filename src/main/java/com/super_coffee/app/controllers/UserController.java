@@ -3,16 +3,14 @@ package com.super_coffee.app.controllers;
 import com.super_coffee.app.models.User;
 import com.super_coffee.app.service.IUserService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.validation.Valid;
+import java.util.*;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
@@ -22,17 +20,14 @@ public class UserController {
     private final IUserService userService;
 
     @PostMapping
-    public ResponseEntity<?> createUser( @RequestBody @Validated User user, BindingResult result ) {
-        if( result.hasErrors() ) {
-            Map<String, Object> errors = new HashMap<>();
-            List<String> formatMessage = result.getFieldErrors().stream()
-                    .map(error -> "The field '" + error.getField() + "' " + error.getDefaultMessage()).toList();
-            errors.put( "errors", formatMessage );
-
-            return ResponseEntity.status( BAD_REQUEST ).body( errors );
+    public ResponseEntity<?> createUser( @RequestBody @Valid User user ) {
+        Optional<User> existed = this.userService.findByEmail( user.getEmail() );
+        if( existed.isPresent() ) {
+            Map<String, Object> errors = this.buildMessageError( CONFLICT, List.of( "Email '" + user.getEmail() + "' already exists." ) );
+            return ResponseEntity.status( CONFLICT ).body( errors );
         }
 
-        return ResponseEntity.status( CREATED ).body( this.userService.save( user ));
+        return ResponseEntity.status( CREATED ).body( this.userService.save( user ) );
     }
 
     @GetMapping
@@ -42,5 +37,14 @@ public class UserController {
         response.put( "users", this.userService.findAll() );
 
         return ResponseEntity.ok().body( response );
+    }
+
+    private Map<String, Object> buildMessageError( HttpStatus status, List<Object> errors ) {
+        Map<String, Object> responseBody = new LinkedHashMap<>();
+        responseBody.put( "timestamp", new Date() );
+        responseBody.put( "status", status.value() );
+        responseBody.put( "errors", errors );
+
+        return responseBody;
     }
 }
