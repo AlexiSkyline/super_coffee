@@ -5,9 +5,11 @@ import com.super_coffee.app.models.User;
 import java.util.List;
 import java.util.Optional;
 
-public interface IUserService {
+public interface IUserService
+{
     User save( User user );
     List<User> findAll();
     Optional<User> findByEmail( String email );
+    User delete( String id );
     int countUser();
 }

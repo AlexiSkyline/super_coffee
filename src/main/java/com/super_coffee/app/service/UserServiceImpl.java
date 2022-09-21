@@ -1,5 +1,7 @@
 package com.super_coffee.app.service;
 
+import com.super_coffee.app.exception.FieldAlreadyUsedException;
+import com.super_coffee.app.exception.UserNotFountException;
 import com.super_coffee.app.models.Role;
 import com.super_coffee.app.models.User;
 import com.super_coffee.app.repository.IUserRepository;
@@ -12,14 +14,20 @@ import java.util.List;
 import java.util.Optional;
 
 @Service @AllArgsConstructor
-public class UserServiceImpl implements IUserService {
+public class UserServiceImpl implements IUserService
+{
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final IRoleService roleService;
 
     @Override
     @Transactional
-    public User save( User user ) {
+    public User save( User user )
+    {
+        Optional<User> existed = this.userRepository.findByEmail( user.getEmail() );
+        if( existed.isPresent() ) {
+            throw new FieldAlreadyUsedException( "E-mail" );
+        }
         Optional<Role> role = this.roleService.findByDescription( "USER_ROLE" );
         role.ifPresent( value -> user.setRoles( List.of(value) ) );
         user.setPassword( this.passwordEncoder.encode( user.getPassword() ) );
@@ -29,18 +37,32 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     @Transactional( readOnly = true )
-    public List<User> findAll() {
+    public List<User> findAll()
+    {
         return this.userRepository.findAll();
     }
 
     @Override
     @Transactional( readOnly = true )
-    public Optional<User> findByEmail( String email ) {
+    public Optional<User> findByEmail( String email )
+    {
         return this.userRepository.findByEmail( email );
     }
 
     @Override
-    public int countUser() {
+    public User delete( String id ) {
+        Optional<User> existed = this.userRepository.findById( id );
+        if( existed.isEmpty() ) {
+            throw new UserNotFountException( id );
+        }
+        existed.get().setStatus( false );
+
+        return this.userRepository.save( existed.get() );
+    }
+
+    @Override
+    public int countUser()
+    {
         return this.userRepository.countAllByStatusIsTrue();
     }
 }
