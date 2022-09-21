@@ -12,5 +12,5 @@ public class ExceptionModel
     private final String timestamp;
     private final int httpError;
     private final HttpStatus httpStatus;
-    List<String> errors;
+    List<Error> errors;
 }

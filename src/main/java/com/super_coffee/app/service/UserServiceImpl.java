@@ -1,7 +1,7 @@
 package com.super_coffee.app.service;
 
 import com.super_coffee.app.exception.FieldAlreadyUsedException;
-import com.super_coffee.app.exception.UserNotFountException;
+import com.super_coffee.app.exception.DocumentNotFountException;
 import com.super_coffee.app.models.Role;
 import com.super_coffee.app.models.User;
 import com.super_coffee.app.repository.IUserRepository;
@@ -53,7 +53,7 @@ public class UserServiceImpl implements IUserService
     public User delete( String id ) {
         Optional<User> existed = this.userRepository.findById( id );
         if( existed.isEmpty() ) {
-            throw new UserNotFountException( id );
+            throw new DocumentNotFountException( id, "User","ID" );
         }
         existed.get().setStatus( false );
 

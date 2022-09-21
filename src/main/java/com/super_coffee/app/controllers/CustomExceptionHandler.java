@@ -1,7 +1,8 @@
 package com.super_coffee.app.controllers;
 
 import com.super_coffee.app.exception.FieldAlreadyUsedException;
-import com.super_coffee.app.exception.UserNotFountException;
+import com.super_coffee.app.exception.DocumentNotFountException;
+import com.super_coffee.app.models.Error;
 import com.super_coffee.app.models.ExceptionModel;
 import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -29,10 +30,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler
     protected ResponseEntity<Object> handleMethodArgumentNotValid( MethodArgumentNotValidException exception, HttpHeaders headers, HttpStatus status, WebRequest request )
     {
         BindingResult result = exception.getBindingResult();
-        List<String> errors = result.getFieldErrors()
-                .stream()
-                .map( error -> messageSource.getMessage( error, Locale.forLanguageTag("US") ) )
-                .toList();
+        List<Error> errors = new ArrayList<>();
+        result.getFieldErrors().forEach( error -> {
+            String message = messageSource.getMessage( error, Locale.forLanguageTag("US") );
+            errors.add( new Error( message, error.getField(), "Body" ) );
+        });
+
         ExceptionModel responseBody = new ExceptionModel( new Date().toString(), status.value(), status, errors );
 
         return new ResponseEntity<>( responseBody, status );
@@ -41,14 +44,16 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler
     @ExceptionHandler( value = { FieldAlreadyUsedException.class } )
     protected ResponseEntity<ExceptionModel> anyFieldAlreadyUsedException( FieldAlreadyUsedException exception )
     {
-        ExceptionModel responseBody = new ExceptionModel( new Date().toString(), CONFLICT.value(), CONFLICT, List.of( exception.getMessage() ) );
+        Error error = new Error( exception.getMessage(), exception.getFieldName(), "Body" );
+        ExceptionModel responseBody = new ExceptionModel( new Date().toString(), CONFLICT.value(), CONFLICT, List.of( error ) );
         return new ResponseEntity<>( responseBody, CONFLICT );
     }
 
-    @ExceptionHandler( value = { UserNotFountException.class } )
-    protected ResponseEntity<ExceptionModel> notFoundUserException( UserNotFountException exception )
+    @ExceptionHandler( value = { DocumentNotFountException.class } )
+    protected ResponseEntity<ExceptionModel> notFoundDocumentException( DocumentNotFountException exception )
     {
-        ExceptionModel responseBody = new ExceptionModel( new Date().toString(), NOT_FOUND.value(), NOT_FOUND, List.of( exception.getMessage() ) );
+        Error error = new Error( exception.getMessage(), exception.getField(), "PathVariable" );
+        ExceptionModel responseBody = new ExceptionModel( new Date().toString(), NOT_FOUND.value(), NOT_FOUND, List.of( error ) );
         return new ResponseEntity<>( responseBody, NOT_FOUND );
     }
 }
