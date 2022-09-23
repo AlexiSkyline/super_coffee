@@ -28,7 +28,7 @@ public class UserService implements IUserService
     {
         Optional<User> existed = this.userRepository.findByEmail( user.getEmail() );
         if( existed.isPresent() ) {
-            throw new FieldAlreadyUsedException( "E-mail" );
+            throw new FieldAlreadyUsedException( "E-mail", "User" );
         }
         Optional<Role> role = this.roleService.findByDescription( "USER_ROLE" );
         role.ifPresent( value -> user.setRoles( List.of(value) ) );
@@ -52,6 +52,7 @@ public class UserService implements IUserService
     }
 
     @Override
+    @Transactional
     public User delete( String id )
     {
         Optional<User> existed = this.userRepository.findById( id );
@@ -64,6 +65,7 @@ public class UserService implements IUserService
     }
 
     @Override
+    @Transactional( readOnly = true )
     public int countUser()
     {
         return this.userRepository.countAllByStatusIsTrue();

@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -20,7 +21,7 @@ public class CategoryController
     private final ICategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> createCategory( @RequestBody Category category )
+    public ResponseEntity<Map<String, Object>> createCategory( @RequestBody @Valid Category category )
     {
         return ResponseHandler.responseBuild( CREATED, "Category Created Successfully", 0,
                                         this.categoryService.save( category ) );
