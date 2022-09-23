@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service @AllArgsConstructor
-public class RoleServiceImpl implements IRoleService
+public class RoleService implements IRoleService
 {
     private final IRoleRepository roleRepository;
 

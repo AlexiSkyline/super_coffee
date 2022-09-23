@@ -1,6 +1,7 @@
 package com.super_coffee.app.controllers;
 
 import com.super_coffee.app.models.domain.User;
+import com.super_coffee.app.response.ResponseHandler;
 import com.super_coffee.app.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import javax.validation.Valid;
 import java.util.*;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @RestController
 @RequestMapping( "/api/v1/users" )
@@ -19,26 +21,23 @@ public class UserController
     private final IUserService userService;
 
     @PostMapping
-    public ResponseEntity<?> createUser( @RequestBody @Valid User user )
+    public ResponseEntity<Map<String, Object>> createUser( @RequestBody @Valid User user )
     {
-        return ResponseEntity.status( CREATED ).body( this.userService.save( user ) );
+        return ResponseHandler.responseBuild( CREATED, "User Created Successfully", 0,
+                this.userService.save( user ) );
     }
 
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllUsers()
     {
-        Map<String, Object> response = new HashMap<>();
-        response.put( "total", this.userService.countUser() );
-        response.put( "users", this.userService.findAll() );
-
-        return ResponseEntity.ok().body( response );
+        return ResponseHandler.responseBuild( OK, "Requested All Users are given here", this.userService.countUser(),
+                this.userService.findAll() );
     }
 
     @DeleteMapping( "{id}" )
-    public ResponseEntity<?> deleteUser( @PathVariable String id )
+    public ResponseEntity<Map<String, Object>> deleteUser( @PathVariable String id )
     {
-        Map<String, Object> response = new HashMap<>();
-        response.put( "user", this.userService.delete( id ) );
-        return ResponseEntity.status( CREATED ).body( response );
+        return ResponseHandler.responseBuild( OK, "User Delete Successfully", 0,
+                this.userService.delete( id ) );
     }
 }

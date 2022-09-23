@@ -12,7 +12,7 @@ public class Category
     @Id
     private String _id;
     private String name;
-    private boolean status;
+    private boolean status = true;
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt = LocalDateTime.now();
 }

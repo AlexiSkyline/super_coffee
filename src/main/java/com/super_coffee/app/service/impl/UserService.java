@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service @AllArgsConstructor
-public class UserServiceImpl implements IUserService
+public class UserService implements IUserService
 {
     private final IUserRepository userRepository;
     private final PasswordEncoder passwordEncoder;

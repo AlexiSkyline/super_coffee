@@ -1,7 +1,7 @@
 package com.super_coffee.app;
 
 import com.super_coffee.app.models.domain.Role;
-import com.super_coffee.app.service.impl.RoleServiceImpl;
+import com.super_coffee.app.service.impl.RoleService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -20,7 +20,7 @@ public class SuperCoffeeApplication {
 	 * @return a lambda with the operations
 	 */
 	@Bean
-	CommandLineRunner run( RoleServiceImpl roleService ) {
+	CommandLineRunner run( RoleService roleService ) {
 		return args -> {
 			Role ADMIN = new Role( "ADMIN_ROLE" );
 			Role USER = new Role( "USER_ROLE" );
