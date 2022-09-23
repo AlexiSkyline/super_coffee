@@ -50,13 +50,6 @@ public class CategoryService implements ICategoryService
     }
 
     @Override
-    @Transactional( readOnly = true )
-    public Optional<Category> findByName( String name )
-    {
-        return this.categoryRepository.findByName( name );
-    }
-
-    @Override
     @Transactional
     public Category update( String id, Category category )
     {
@@ -83,6 +76,7 @@ public class CategoryService implements ICategoryService
         if( existed.isEmpty() || !existed.get().isStatus() ) {
             throw new DocumentNotFountException( id, "Category", "ID" );
         }
+        existed.get().setUpdatedAt( LocalDateTime.now() );
         existed.get().setStatus( false );
 
         return this.categoryRepository.save( existed.get() );

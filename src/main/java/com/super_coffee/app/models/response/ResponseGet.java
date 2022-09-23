@@ -1,16 +1,16 @@
-package com.super_coffee.app.models;
+package com.super_coffee.app.models.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 
-import java.util.List;
-
 @AllArgsConstructor @Getter
-public class ExceptionModel
+public class ResponseGet
 {
     private final String timeStamp;
-    private final int httpError;
+    private final int httpCode;
     private final HttpStatus httpStatus;
-    List<Error> errors;
+    private final String message;
+    private final int totalDocuments;
+    private final Object data;
 }

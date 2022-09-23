@@ -1,6 +1,8 @@
 package com.super_coffee.app.controllers;
 
 import com.super_coffee.app.models.domain.Category;
+import com.super_coffee.app.models.response.ResponseAction;
+import com.super_coffee.app.models.response.ResponseGet;
 import com.super_coffee.app.response.ResponseHandler;
 import com.super_coffee.app.service.ICategoryService;
 import lombok.AllArgsConstructor;
@@ -8,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Map;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
@@ -21,37 +22,33 @@ public class CategoryController
     private final ICategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> createCategory( @RequestBody @Valid Category category )
+    public ResponseEntity<ResponseAction> createCategory(@RequestBody @Valid Category category )
     {
-        return ResponseHandler.responseBuild( CREATED, "Category Created Successfully", 0,
-                                        this.categoryService.save( category ) );
+        return ResponseHandler.responseBuild( CREATED, "Category Created Successfully", this.categoryService.save( category ) );
     }
 
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getAllCategory()
+    public ResponseEntity<ResponseGet> getAllCategory()
     {
         return ResponseHandler.responseBuild( OK, "Requested All Category are given here", this.categoryService.countAllDocuments(),
                                         this.categoryService.findAll() );
     }
 
     @GetMapping( "{id}" )
-    public ResponseEntity<Map<String, Object>> getCategoryById( @PathVariable String id )
+    public ResponseEntity<ResponseAction> getCategoryById( @PathVariable String id )
     {
-        return ResponseHandler.responseBuild( OK, "Requested Category By ID are given here", 0,
-                this.categoryService.findById( id ) );
+        return ResponseHandler.responseBuild( OK, "Requested Category By ID are given here", this.categoryService.findById( id ) );
     }
 
     @PutMapping( "{id}" )
-    public ResponseEntity<Map<String, Object>> updateCategory( @PathVariable String id, @RequestBody Category category )
+    public ResponseEntity<ResponseAction> updateCategory( @PathVariable String id, @RequestBody @Valid Category category )
     {
-        return ResponseHandler.responseBuild( OK, "Category Update Successfully", 0,
-                this.categoryService.update( id, category ) );
+        return ResponseHandler.responseBuild( OK, "Category Update Successfully", this.categoryService.update( id, category ) );
     }
 
     @DeleteMapping( "{id}" )
-    public ResponseEntity<Map<String, Object>> deleteCategory( @PathVariable String id )
+    public ResponseEntity<ResponseAction> deleteCategory( @PathVariable String id )
     {
-        return ResponseHandler.responseBuild( OK, "Category Delete Successfully", 0,
-                this.categoryService.delete( id ) );
+        return ResponseHandler.responseBuild( OK, "Category Delete Successfully", this.categoryService.delete( id ) );
     }
 }

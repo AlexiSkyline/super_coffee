@@ -2,14 +2,4 @@ package com.super_coffee.app.service;
 
 import com.super_coffee.app.models.domain.User;
 
-import java.util.List;
-import java.util.Optional;
-
-public interface IUserService
-{
-    User save( User user );
-    List<User> findAll();
-    Optional<User> findByEmail( String email );
-    User delete( String id );
-    int countUser();
-}
+public interface IUserService extends ICrudRepository<User> {}

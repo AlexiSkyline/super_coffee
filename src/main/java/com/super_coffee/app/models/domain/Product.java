@@ -14,13 +14,11 @@ public class Product
 {
     @Id
     private String _id;
-    @NotNull
-    @Size( min = 4, max = 16 )
+    @NotNull @Size( min = 4, max = 16 )
     private String name;
     @NotNull
     private Double price;
-    @NotNull
-    @Size( min = 5, max = 25 )
+    @NotNull @Size( min = 5, max = 25 )
     private String description;
     @DBRef
     private Category category;

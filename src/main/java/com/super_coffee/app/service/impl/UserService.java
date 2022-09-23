@@ -2,8 +2,8 @@ package com.super_coffee.app.service.impl;
 
 import com.super_coffee.app.exception.FieldAlreadyUsedException;
 import com.super_coffee.app.exception.DocumentNotFountException;
-import com.super_coffee.app.models.domain.Role;
 import com.super_coffee.app.models.domain.User;
+import com.super_coffee.app.models.domain.Role;
 import com.super_coffee.app.repository.IUserRepository;
 import com.super_coffee.app.service.IRoleService;
 import com.super_coffee.app.service.IUserService;
@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,18 +42,41 @@ public class UserService implements IUserService
     @Transactional( readOnly = true )
     public List<User> findAll()
     {
-        return this.userRepository.findAll();
+        return this.userRepository.findAllByStatusTrue();
     }
 
     @Override
     @Transactional( readOnly = true )
-    public Optional<User> findByEmail( String email )
+    public User findById( String id )
     {
-        Optional<User> existed = this.userRepository.findByEmail( email );
-        if( existed.isPresent() ) {
+        Optional<User> existed = this.userRepository.findById( id );
+        if( existed.isEmpty() ) {
+            throw new DocumentNotFountException( id, "User", "ID" );
+        }
+
+        return existed.get();
+    }
+
+    @Override
+    @Transactional
+    public User update( String id, User user )
+    {
+        Optional<User> existed = this.userRepository.findById( id );
+        if( existed.isEmpty() ) {
+            throw new DocumentNotFountException( id, "User","ID" );
+        }
+
+        Optional<User> excitedEmail = this.userRepository.findByEmail( user.getEmail() );
+        if( excitedEmail.isPresent() && !existed.get().getEmail().equals( excitedEmail.get().getEmail() ) ) {
             throw new FieldAlreadyUsedException( "E-mail", "User" );
         }
-        return this.userRepository.findByEmail( email );
+
+        user.set_id( id );
+        user.setUpdatedAt( LocalDateTime.now() );
+        user.setPassword( this.passwordEncoder.encode( user.getPassword() ) );
+        user.setRoles( existed.get().getRoles() );
+
+        return this.userRepository.save( user );
     }
 
     @Override
@@ -63,6 +87,7 @@ public class UserService implements IUserService
         if( existed.isEmpty() || !existed.get().isStatus() ) {
             throw new DocumentNotFountException( id, "User","ID" );
         }
+        existed.get().setUpdatedAt( LocalDateTime.now() );
         existed.get().setStatus( false );
 
         return this.userRepository.save( existed.get() );
@@ -70,7 +95,7 @@ public class UserService implements IUserService
 
     @Override
     @Transactional( readOnly = true )
-    public int countUser()
+    public int countAllDocuments()
     {
         return this.userRepository.countAllByStatusIsTrue();
     }

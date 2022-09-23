@@ -50,13 +50,6 @@ public class ProductService implements IProductService
     }
 
     @Override
-    @Transactional( readOnly = true )
-    public Optional<Product> findByName( String name )
-    {
-        return this.productRepository.findByName( name );
-    }
-
-    @Override
     @Transactional
     public Product update( String id, Product product )
     {
@@ -83,6 +76,7 @@ public class ProductService implements IProductService
         if( existed.isEmpty() || !existed.get().getStatus() ) {
             throw new DocumentNotFountException( id, "Product", "ID" );
         }
+        existed.get().setUpdatedAt( LocalDateTime.now() );
         existed.get().setStatus( false );
 
         return this.productRepository.save( existed.get() );

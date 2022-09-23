@@ -12,14 +12,17 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 @Configuration
 @EnableGlobalMethodSecurity( prePostEnabled = true, securedEnabled = true, jsr250Enabled = true )
-public class SecurityConfig {
+public class SecurityConfig
+{
     @Bean
-    public PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder()
+    {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public SecurityFilterChain filterChain( HttpSecurity http ) throws Exception {
+    public SecurityFilterChain filterChain( HttpSecurity http ) throws Exception
+    {
         http.csrf().disable().sessionManagement().sessionCreationPolicy( STATELESS )
                 .and()
                 .authorizeRequests().antMatchers( "/**" ).permitAll();
