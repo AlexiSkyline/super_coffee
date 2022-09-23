@@ -48,6 +48,10 @@ public class UserService implements IUserService
     @Transactional( readOnly = true )
     public Optional<User> findByEmail( String email )
     {
+        Optional<User> existed = this.userRepository.findByEmail( email );
+        if( existed.isPresent() ) {
+            throw new FieldAlreadyUsedException( "E-mail", "User" );
+        }
         return this.userRepository.findByEmail( email );
     }
 
@@ -56,7 +60,7 @@ public class UserService implements IUserService
     public User delete( String id )
     {
         Optional<User> existed = this.userRepository.findById( id );
-        if( existed.isEmpty() ) {
+        if( existed.isEmpty() || !existed.get().isStatus() ) {
             throw new DocumentNotFountException( id, "User","ID" );
         }
         existed.get().setStatus( false );

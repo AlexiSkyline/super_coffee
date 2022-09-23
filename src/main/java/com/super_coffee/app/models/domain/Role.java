@@ -10,13 +10,15 @@ import javax.validation.constraints.NotNull;
 @Data
 @Document( "roles" )
 @NoArgsConstructor
-public class Role {
+public class Role
+{
     @Id
     private String _id;
     @NotNull( message = "is Required" )
     private String description;
 
-    public Role( String description ) {
+    public Role( String description )
+    {
         this.description = description;
     }
 }

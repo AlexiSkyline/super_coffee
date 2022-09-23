@@ -9,6 +9,6 @@ import java.util.Optional;
 public interface ICategoryRepository extends MongoRepository<Category, String>
 {
     List<Category> findAllByStatusTrue();
-    Optional<Category> findByName(String name );
+    Optional<Category> findByName( String name );
     int countAllByStatusIsTrue();
 }

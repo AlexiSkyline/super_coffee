@@ -30,7 +30,7 @@ public class CategoryController
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllCategory()
     {
-        return ResponseHandler.responseBuild( OK, "Requested All Category are given here", this.categoryService.countCategory(),
+        return ResponseHandler.responseBuild( OK, "Requested All Category are given here", this.categoryService.countAllDocuments(),
                                         this.categoryService.findAll() );
     }
 

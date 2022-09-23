@@ -43,7 +43,7 @@ public class CategoryService implements ICategoryService
     {
         Optional<Category> existed = this.categoryRepository.findById( id );
         if( existed.isEmpty() ) {
-            throw new DocumentNotFountException( id, "Category","ID" );
+            throw new DocumentNotFountException( id, "Category", "ID" );
         }
 
         return existed.get();
@@ -54,20 +54,6 @@ public class CategoryService implements ICategoryService
     public Optional<Category> findByName( String name )
     {
         return this.categoryRepository.findByName( name );
-    }
-
-    @Override
-    @Transactional
-    public Category delete( String id )
-    {
-        Optional<Category> existed = this.categoryRepository.findById( id );
-        if( existed.isEmpty() || !existed.get().isStatus() ) {
-            throw new DocumentNotFountException( id, "Category","ID" );
-        }
-
-        existed.get().setStatus( false );
-
-        return this.categoryRepository.save( existed.get() );
     }
 
     @Override
@@ -90,8 +76,21 @@ public class CategoryService implements ICategoryService
     }
 
     @Override
+    @Transactional
+    public Category delete( String id )
+    {
+        Optional<Category> existed = this.categoryRepository.findById( id );
+        if( existed.isEmpty() || !existed.get().isStatus() ) {
+            throw new DocumentNotFountException( id, "Category", "ID" );
+        }
+        existed.get().setStatus( false );
+
+        return this.categoryRepository.save( existed.get() );
+    }
+
+    @Override
     @Transactional( readOnly = true )
-    public int countCategory()
+    public int countAllDocuments()
     {
         return this.categoryRepository.countAllByStatusIsTrue();
     }
