@@ -1,7 +1,7 @@
 package com.super_coffee.app;
 
-import com.super_coffee.app.models.Role;
-import com.super_coffee.app.service.RoleServiceImpl;
+import com.super_coffee.app.models.domain.Role;
+import com.super_coffee.app.service.impl.RoleServiceImpl;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,10 +1,12 @@
-package com.super_coffee.app.service;
+package com.super_coffee.app.service.impl;
 
 import com.super_coffee.app.exception.FieldAlreadyUsedException;
 import com.super_coffee.app.exception.DocumentNotFountException;
-import com.super_coffee.app.models.Role;
-import com.super_coffee.app.models.User;
+import com.super_coffee.app.models.domain.Role;
+import com.super_coffee.app.models.domain.User;
 import com.super_coffee.app.repository.IUserRepository;
+import com.super_coffee.app.service.IRoleService;
+import com.super_coffee.app.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -50,7 +52,8 @@ public class UserServiceImpl implements IUserService
     }
 
     @Override
-    public User delete( String id ) {
+    public User delete( String id )
+    {
         Optional<User> existed = this.userRepository.findById( id );
         if( existed.isEmpty() ) {
             throw new DocumentNotFountException( id, "User","ID" );

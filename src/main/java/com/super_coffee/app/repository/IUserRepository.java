@@ -1,6 +1,6 @@
 package com.super_coffee.app.repository;
 
-import com.super_coffee.app.models.User;
+import com.super_coffee.app.models.domain.User;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

@@ -1,6 +1,6 @@
 package com.super_coffee.app.controllers;
 
-import com.super_coffee.app.models.User;
+import com.super_coffee.app.models.domain.User;
 import com.super_coffee.app.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;

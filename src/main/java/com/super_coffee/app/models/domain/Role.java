@@ -1,4 +1,4 @@
-package com.super_coffee.app.models;
+package com.super_coffee.app.models.domain;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

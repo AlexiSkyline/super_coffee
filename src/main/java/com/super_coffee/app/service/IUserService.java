@@ -1,6 +1,6 @@
 package com.super_coffee.app.service;
 
-import com.super_coffee.app.models.User;
+import com.super_coffee.app.models.domain.User;
 
 import java.util.List;
 import java.util.Optional;
