@@ -2,9 +2,9 @@ package com.super_coffee.app.service;
 
 import com.super_coffee.app.models.domain.Role;
 
-public interface IRoleService
+import java.util.Optional;
+
+public interface IRoleService extends ICrudRepository<Role>
 {
-    Role save( Role role );
-    Role findById( String id );
-    Role findByDescription( String description );
+    Optional<Role> findByDescription( String description );
 }

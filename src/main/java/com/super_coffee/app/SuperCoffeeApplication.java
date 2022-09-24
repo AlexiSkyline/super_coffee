@@ -1,13 +1,14 @@
 package com.super_coffee.app;
 
 import com.super_coffee.app.models.domain.Role;
-import com.super_coffee.app.service.impl.RoleService;
+import com.super_coffee.app.repository.IRoleRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-@SpringBootApplication
+@SpringBootApplication @Slf4j
 public class SuperCoffeeApplication {
 
 	public static void main(String[] args) {
@@ -16,21 +17,28 @@ public class SuperCoffeeApplication {
 
 	/**
 	 * Define default roles when they do not exist
-	 * @param roleService contains the methods of business logic
+	 * @param roleRepository contains the methods of business logic
 	 * @return a lambda with the operations
 	 */
 	@Bean
-	CommandLineRunner run( RoleService roleService ) {
+	CommandLineRunner run( IRoleRepository roleRepository )
+	{
 		return args -> {
 			Role ADMIN = new Role( "ADMIN_ROLE" );
 			Role USER = new Role( "USER_ROLE" );
 			Role SALES = new Role( "SALES_ROLE" );
 
-			if( roleService.findByDescription( ADMIN.getDescription() ) == null ) roleService.save(ADMIN);
+			roleRepository.findByDescription( ADMIN.getDescription() ).ifPresentOrElse(( value ) -> {
+				log.info( "Created Successfully role:" + value.getDescription() );
+			}, () -> roleRepository.save(ADMIN) );
 
-			if( roleService.findByDescription( USER.getDescription() ) == null ) roleService.save( USER );
+			roleRepository.findByDescription( USER.getDescription() ).ifPresentOrElse(( value ) -> {
+				log.info( "Created Successfully role:" + value.getDescription() );
+			}, () -> { roleRepository.save(USER); } );
 
-			if( roleService.findByDescription( SALES.getDescription() ) == null) roleService.save( SALES );
+			roleRepository.findByDescription( SALES.getDescription() ).ifPresentOrElse(( value ) -> {
+				log.info( "Created Successfully role:" + value.getDescription() );
+			}, () -> { roleRepository.save(SALES); } );
 		};
 	}
 }

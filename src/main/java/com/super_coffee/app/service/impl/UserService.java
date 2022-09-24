@@ -31,7 +31,7 @@ public class UserService implements IUserService
         if( userFound.isPresent() ) {
             throw new FieldAlreadyUsedException( "E-mail", "User" );
         }
-        Role role = this.roleService.findByDescription( "USER_ROLE" );
+        Role role = this.roleService.findByDescription( "USER_ROLE" ).get();
         user.setRoles( List.of( role ) );
         user.setPassword( this.passwordEncoder.encode( user.getPassword() ) );
 
@@ -49,32 +49,23 @@ public class UserService implements IUserService
     @Transactional( readOnly = true )
     public User findById( String id )
     {
-        Optional<User> userFound = this.userRepository.findById( id );
-        if( userFound.isEmpty() ) {
-            throw new DocumentNotFountException( id, "User", "ID" );
-        }
-
-        return userFound.get();
+        return this.getUserById( id );
     }
 
     @Override
     @Transactional
     public User update( String id, User user )
     {
-        Optional<User> userFound = this.userRepository.findById( id );
-        if( userFound.isEmpty() ) {
-            throw new DocumentNotFountException( id, "User","ID" );
-        }
-
+        User userFound = this.getUserById( id );
         Optional<User> emailFound = this.userRepository.findByEmail( user.getEmail() );
-        if( emailFound.isPresent() && !userFound.get().getEmail().equals( emailFound.get().getEmail() ) ) {
+        if( emailFound.isPresent() && !userFound.getEmail().equals( emailFound.get().getEmail() ) ) {
             throw new FieldAlreadyUsedException( "E-mail", "User" );
         }
 
         user.set_id( id );
         user.setUpdatedAt( LocalDateTime.now() );
         user.setPassword( this.passwordEncoder.encode( user.getPassword() ) );
-        user.setRoles( userFound.get().getRoles() );
+        user.setRoles( userFound.getRoles() );
 
         return this.userRepository.save( user );
     }
@@ -82,29 +73,23 @@ public class UserService implements IUserService
     @Override
     @Transactional
     public User addRoleUser( String id, Role role ) {
-        Optional<User> userFound = this.userRepository.findById( id );
-        if( userFound.isEmpty() ) {
-            throw new DocumentNotFountException( id, "User","ID" );
-        }
-        Role roleFound =  this.roleService.findByDescription( role.getDescription() );
-        userFound.get().addRole( roleFound );
-        userFound.get().setUpdatedAt( LocalDateTime.now() );
+        User userFound = this.getUserById( id );
+        Role roleFound =  this.roleService.findByDescription( role.getDescription() ).get();
+        userFound.addRole( roleFound );
+        userFound.setUpdatedAt( LocalDateTime.now() );
 
-        return this.userRepository.save( userFound.get() );
+        return this.userRepository.save( userFound );
     }
 
     @Override
     @Transactional
     public User delete( String id )
     {
-        Optional<User> userFound = this.userRepository.findById( id );
-        if( userFound.isEmpty() || !userFound.get().getStatus() ) {
-            throw new DocumentNotFountException( id, "User","ID" );
-        }
-        userFound.get().setUpdatedAt( LocalDateTime.now() );
-        userFound.get().setStatus( false );
+        User userFound = this.getUserById( id );
+        userFound.setUpdatedAt( LocalDateTime.now() );
+        userFound.setStatus( false );
 
-        return this.userRepository.save( userFound.get() );
+        return this.userRepository.save( userFound );
     }
 
     @Override
@@ -112,5 +97,15 @@ public class UserService implements IUserService
     public int countAllDocuments()
     {
         return this.userRepository.countAllByStatusIsTrue();
+    }
+
+    public User getUserById( String id )
+    {
+        Optional<User> userFound = this.userRepository.findById( id );
+        if( userFound.isEmpty() || !userFound.get().getStatus() ) {
+            throw new DocumentNotFountException( id, "User", "ID" );
+        }
+
+        return userFound.get();
     }
 }

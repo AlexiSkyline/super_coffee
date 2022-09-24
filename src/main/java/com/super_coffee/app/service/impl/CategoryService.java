@@ -41,30 +41,21 @@ public class CategoryService implements ICategoryService
     @Transactional( readOnly = true )
     public Category findById( String id )
     {
-        Optional<Category> categoryFound = this.categoryRepository.findById( id );
-        if( categoryFound.isEmpty() ) {
-            throw new DocumentNotFountException( id, "Category", "ID" );
-        }
-
-        return categoryFound.get();
+        return this.getCategoryById( id );
     }
 
     @Override
     @Transactional
     public Category update( String id, Category category )
     {
-        Optional<Category> categoryFound = this.categoryRepository.findById( id );
-        if( categoryFound.isEmpty() ) {
-            throw new DocumentNotFountException( id, "Category","ID" );
-        }
-
+        Category categoryFound = this.getCategoryById( id );
         Optional<Category> categoryFoundByName = this.categoryRepository.findByName( category.getName() );
-        if( categoryFoundByName.isPresent() && !categoryFound.get().getName().equals( categoryFoundByName.get().getName() ) ) {
+        if( categoryFoundByName.isPresent() && !categoryFound.getName().equals( categoryFoundByName.get().getName() ) ) {
             throw new FieldAlreadyUsedException( "Name", "Category" );
         }
-
         category.set_id( id );
         category.setUpdatedAt( LocalDateTime.now() );
+
         return this.categoryRepository.save( category );
     }
 
@@ -72,14 +63,11 @@ public class CategoryService implements ICategoryService
     @Transactional
     public Category delete( String id )
     {
-        Optional<Category> categoryFound = this.categoryRepository.findById( id );
-        if( categoryFound.isEmpty() || !categoryFound.get().getStatus() ) {
-            throw new DocumentNotFountException( id, "Category", "ID" );
-        }
-        categoryFound.get().setUpdatedAt( LocalDateTime.now() );
-        categoryFound.get().setStatus( false );
+        Category categoryFound = this.getCategoryById( id );
+        categoryFound.setUpdatedAt( LocalDateTime.now() );
+        categoryFound.setStatus( false );
 
-        return this.categoryRepository.save( categoryFound.get() );
+        return this.categoryRepository.save( categoryFound );
     }
 
     @Override
@@ -87,5 +75,15 @@ public class CategoryService implements ICategoryService
     public int countAllDocuments()
     {
         return this.categoryRepository.countAllByStatusIsTrue();
+    }
+
+    private Category getCategoryById( String id )
+    {
+        Optional<Category> categoryFound = this.categoryRepository.findById( id );
+        if( categoryFound.isEmpty() || !categoryFound.get().getStatus() ) {
+            throw new DocumentNotFountException( id, "Category", "ID" );
+        }
+
+        return categoryFound.get();
     }
 }

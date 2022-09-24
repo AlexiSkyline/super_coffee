@@ -41,30 +41,21 @@ public class ProductService implements IProductService
     @Transactional( readOnly = true )
     public Product findById( String id )
     {
-        Optional<Product> productFound = this.productRepository.findById( id );
-        if( productFound.isEmpty() ) {
-            throw new DocumentNotFountException( id, "Product", "ID" );
-        }
-
-        return productFound.get();
+        return this.getProductById( id );
     }
 
     @Override
     @Transactional
     public Product update( String id, Product product )
     {
-        Optional<Product> productFound = this.productRepository.findById( id );
-        if( productFound.isEmpty() ) {
-            throw new DocumentNotFountException( id, "Product","ID" );
-        }
-
+        Product productFound = this.getProductById( id );
         Optional<Product> productFoundByName = this.productRepository.findByName( product.getName() );
-        if( productFoundByName.isPresent() && !productFound.get().getName().equals( productFoundByName.get().getName() ) ) {
+        if( productFoundByName.isPresent() && !productFound.getName().equals( productFoundByName.get().getName() ) ) {
             throw new FieldAlreadyUsedException( "Name", "Product" );
         }
-
         product.set_id( id );
         product.setUpdatedAt( LocalDateTime.now() );
+
         return this.productRepository.save( product );
     }
 
@@ -72,14 +63,11 @@ public class ProductService implements IProductService
     @Transactional
     public Product delete( String id )
     {
-        Optional<Product> productFound = this.productRepository.findById( id );
-        if( productFound.isEmpty() || !productFound.get().getStatus() ) {
-            throw new DocumentNotFountException( id, "Product", "ID" );
-        }
-        productFound.get().setUpdatedAt( LocalDateTime.now() );
-        productFound.get().setStatus( false );
+        Product productFound = this.getProductById( id );
+        productFound.setUpdatedAt( LocalDateTime.now() );
+        productFound.setStatus( false );
 
-        return this.productRepository.save( productFound.get() );
+        return this.productRepository.save( productFound );
     }
 
     @Override
@@ -87,5 +75,15 @@ public class ProductService implements IProductService
     public int countAllDocuments()
     {
         return this.productRepository.countAllByStatusIsTrue();
+    }
+
+    private Product getProductById( String id )
+    {
+        Optional<Product> productFound = this.productRepository.findById( id );
+        if( productFound.isEmpty() || !productFound.get().getStatus() ) {
+            throw new DocumentNotFountException( id, "Product", "ID" );
+        }
+
+        return productFound.get();
     }
 }

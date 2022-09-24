@@ -4,15 +4,15 @@ import lombok.Getter;
 
 public class DocumentNotFountException extends RuntimeException
 {
-    private final String id;
+    private final String term;
     private final String collectionName;
     @Getter
     private final String field;
 
-    public DocumentNotFountException( String id, String collectionName,String field )
+    public DocumentNotFountException( String term, String collectionName,String field )
     {
-        super( id );
-        this.id = id;
+        super( term );
+        this.term = term;
         this.collectionName = collectionName;
         this.field = field;
     }
@@ -20,6 +20,6 @@ public class DocumentNotFountException extends RuntimeException
     @Override
     public String getMessage()
     {
-        return String.format( "Not Found Any %s With The ID:'%s'", this.collectionName, this.id );
+        return String.format( "Not Found Any %s With The %s:'%s'", this.collectionName, this.field, this.term );
     }
 }

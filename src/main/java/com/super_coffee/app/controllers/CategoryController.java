@@ -22,7 +22,7 @@ public class CategoryController
     private final ICategoryService categoryService;
 
     @PostMapping
-    public ResponseEntity<ResponseAction> createCategory(@RequestBody @Valid Category category )
+    public ResponseEntity<ResponseAction> createCategory( @RequestBody @Valid Category category )
     {
         return ResponseHandler.responseBuild( CREATED, "Category Created Successfully", this.categoryService.save( category ) );
     }
