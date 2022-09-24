@@ -1,5 +1,6 @@
 package com.super_coffee.app.controllers;
 
+import com.super_coffee.app.models.domain.Role;
 import com.super_coffee.app.models.domain.User;
 import com.super_coffee.app.models.response.ResponseAction;
 import com.super_coffee.app.models.response.ResponseGet;
@@ -44,6 +45,12 @@ public class UserController
     public ResponseEntity<ResponseAction> updateUser( @PathVariable String id, @RequestBody @Valid User user )
     {
         return ResponseHandler.responseBuild( OK, "User Update Successfully", this.userService.update( id, user ) );
+    }
+
+    @PutMapping( "/add-role/{id}" )
+    public ResponseEntity<ResponseAction> addRoleUser( @PathVariable String id, @RequestBody @Valid Role role )
+    {
+        return ResponseHandler.responseBuild( OK, "Add Role User Successfully", this.userService.addRoleUser( id, role ) );
     }
 
     @DeleteMapping( "{id}" )

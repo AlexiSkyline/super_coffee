@@ -22,8 +22,8 @@ public class ProductService implements IProductService
     @Transactional
     public Product save( Product product )
     {
-        Optional<Product> excited = this.productRepository.findByName( product.getName() );
-        if( excited.isPresent() ) {
+        Optional<Product> productFound = this.productRepository.findByName( product.getName() );
+        if( productFound.isPresent() ) {
             throw new FieldAlreadyUsedException( "Name", "Product" );
         }
 
@@ -34,32 +34,32 @@ public class ProductService implements IProductService
     @Transactional( readOnly = true )
     public List<Product> findAll()
     {
-        return this.productRepository.findAll();
+        return this.productRepository.findAllByStatusTrue();
     }
 
     @Override
     @Transactional( readOnly = true )
     public Product findById( String id )
     {
-        Optional<Product> existed = this.productRepository.findById( id );
-        if( existed.isEmpty() ) {
+        Optional<Product> productFound = this.productRepository.findById( id );
+        if( productFound.isEmpty() ) {
             throw new DocumentNotFountException( id, "Product", "ID" );
         }
 
-        return existed.get();
+        return productFound.get();
     }
 
     @Override
     @Transactional
     public Product update( String id, Product product )
     {
-        Optional<Product> existed = this.productRepository.findById( id );
-        if( existed.isEmpty() ) {
+        Optional<Product> productFound = this.productRepository.findById( id );
+        if( productFound.isEmpty() ) {
             throw new DocumentNotFountException( id, "Product","ID" );
         }
 
-        Optional<Product> excitedName = this.productRepository.findByName( product.getName() );
-        if( excitedName.isPresent() && !existed.get().getName().equals( excitedName.get().getName() ) ) {
+        Optional<Product> productFoundByName = this.productRepository.findByName( product.getName() );
+        if( productFoundByName.isPresent() && !productFound.get().getName().equals( productFoundByName.get().getName() ) ) {
             throw new FieldAlreadyUsedException( "Name", "Product" );
         }
 
@@ -72,14 +72,14 @@ public class ProductService implements IProductService
     @Transactional
     public Product delete( String id )
     {
-        Optional<Product> existed = this.productRepository.findById( id );
-        if( existed.isEmpty() || !existed.get().getStatus() ) {
+        Optional<Product> productFound = this.productRepository.findById( id );
+        if( productFound.isEmpty() || !productFound.get().getStatus() ) {
             throw new DocumentNotFountException( id, "Product", "ID" );
         }
-        existed.get().setUpdatedAt( LocalDateTime.now() );
-        existed.get().setStatus( false );
+        productFound.get().setUpdatedAt( LocalDateTime.now() );
+        productFound.get().setStatus( false );
 
-        return this.productRepository.save( existed.get() );
+        return this.productRepository.save( productFound.get() );
     }
 
     @Override

@@ -16,7 +16,7 @@ public class Category
     @NotNull
     @Size( min = 4, max = 16 )
     private String name;
-    private boolean status = true;
+    private Boolean status = true;
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt = LocalDateTime.now();
 }

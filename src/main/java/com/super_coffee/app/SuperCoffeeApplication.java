@@ -26,17 +26,11 @@ public class SuperCoffeeApplication {
 			Role USER = new Role( "USER_ROLE" );
 			Role SALES = new Role( "SALES_ROLE" );
 
-			roleService.findByDescription( ADMIN.getDescription() ).ifPresentOrElse(( value ) -> {} ,() -> {
-				roleService.save( ADMIN );
-			});
+			if( roleService.findByDescription( ADMIN.getDescription() ) == null ) roleService.save(ADMIN);
 
-			roleService.findByDescription( USER.getDescription() ).ifPresentOrElse(( value ) -> {} ,() -> {
-				roleService.save( USER );
-			});
+			if( roleService.findByDescription( USER.getDescription() ) == null ) roleService.save( USER );
 
-			roleService.findByDescription( SALES.getDescription() ).ifPresentOrElse(( value ) -> {} ,() -> {
-				roleService.save( SALES );
-			});
+			if( roleService.findByDescription( SALES.getDescription() ) == null) roleService.save( SALES );
 		};
 	}
 }

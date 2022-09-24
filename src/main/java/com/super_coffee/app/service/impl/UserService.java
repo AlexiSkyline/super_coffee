@@ -27,12 +27,12 @@ public class UserService implements IUserService
     @Transactional
     public User save( User user )
     {
-        Optional<User> existed = this.userRepository.findByEmail( user.getEmail() );
-        if( existed.isPresent() ) {
+        Optional<User> userFound = this.userRepository.findByEmail( user.getEmail() );
+        if( userFound.isPresent() ) {
             throw new FieldAlreadyUsedException( "E-mail", "User" );
         }
-        Optional<Role> role = this.roleService.findByDescription( "USER_ROLE" );
-        role.ifPresent( value -> user.setRoles( List.of(value) ) );
+        Role role = this.roleService.findByDescription( "USER_ROLE" );
+        user.setRoles( List.of( role ) );
         user.setPassword( this.passwordEncoder.encode( user.getPassword() ) );
 
         return this.userRepository.save( user );
@@ -49,48 +49,62 @@ public class UserService implements IUserService
     @Transactional( readOnly = true )
     public User findById( String id )
     {
-        Optional<User> existed = this.userRepository.findById( id );
-        if( existed.isEmpty() ) {
+        Optional<User> userFound = this.userRepository.findById( id );
+        if( userFound.isEmpty() ) {
             throw new DocumentNotFountException( id, "User", "ID" );
         }
 
-        return existed.get();
+        return userFound.get();
     }
 
     @Override
     @Transactional
     public User update( String id, User user )
     {
-        Optional<User> existed = this.userRepository.findById( id );
-        if( existed.isEmpty() ) {
+        Optional<User> userFound = this.userRepository.findById( id );
+        if( userFound.isEmpty() ) {
             throw new DocumentNotFountException( id, "User","ID" );
         }
 
-        Optional<User> excitedEmail = this.userRepository.findByEmail( user.getEmail() );
-        if( excitedEmail.isPresent() && !existed.get().getEmail().equals( excitedEmail.get().getEmail() ) ) {
+        Optional<User> emailFound = this.userRepository.findByEmail( user.getEmail() );
+        if( emailFound.isPresent() && !userFound.get().getEmail().equals( emailFound.get().getEmail() ) ) {
             throw new FieldAlreadyUsedException( "E-mail", "User" );
         }
 
         user.set_id( id );
         user.setUpdatedAt( LocalDateTime.now() );
         user.setPassword( this.passwordEncoder.encode( user.getPassword() ) );
-        user.setRoles( existed.get().getRoles() );
+        user.setRoles( userFound.get().getRoles() );
 
         return this.userRepository.save( user );
     }
 
     @Override
     @Transactional
-    public User delete( String id )
-    {
-        Optional<User> existed = this.userRepository.findById( id );
-        if( existed.isEmpty() || !existed.get().isStatus() ) {
+    public User addRoleUser( String id, Role role ) {
+        Optional<User> userFound = this.userRepository.findById( id );
+        if( userFound.isEmpty() ) {
             throw new DocumentNotFountException( id, "User","ID" );
         }
-        existed.get().setUpdatedAt( LocalDateTime.now() );
-        existed.get().setStatus( false );
+        Role roleFound =  this.roleService.findByDescription( role.getDescription() );
+        userFound.get().addRole( roleFound );
+        userFound.get().setUpdatedAt( LocalDateTime.now() );
 
-        return this.userRepository.save( existed.get() );
+        return this.userRepository.save( userFound.get() );
+    }
+
+    @Override
+    @Transactional
+    public User delete( String id )
+    {
+        Optional<User> userFound = this.userRepository.findById( id );
+        if( userFound.isEmpty() || !userFound.get().getStatus() ) {
+            throw new DocumentNotFountException( id, "User","ID" );
+        }
+        userFound.get().setUpdatedAt( LocalDateTime.now() );
+        userFound.get().setStatus( false );
+
+        return this.userRepository.save( userFound.get() );
     }
 
     @Override

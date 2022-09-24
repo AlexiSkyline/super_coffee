@@ -22,8 +22,8 @@ public class CategoryService implements ICategoryService
     @Transactional
     public Category save( Category category )
     {
-        Optional<Category> excited = this.categoryRepository.findByName( category.getName() );
-        if( excited.isPresent() ) {
+        Optional<Category> categoryFound = this.categoryRepository.findByName( category.getName() );
+        if( categoryFound.isPresent() ) {
             throw new FieldAlreadyUsedException( "Name", "Category" );
         }
 
@@ -41,25 +41,25 @@ public class CategoryService implements ICategoryService
     @Transactional( readOnly = true )
     public Category findById( String id )
     {
-        Optional<Category> existed = this.categoryRepository.findById( id );
-        if( existed.isEmpty() ) {
+        Optional<Category> categoryFound = this.categoryRepository.findById( id );
+        if( categoryFound.isEmpty() ) {
             throw new DocumentNotFountException( id, "Category", "ID" );
         }
 
-        return existed.get();
+        return categoryFound.get();
     }
 
     @Override
     @Transactional
     public Category update( String id, Category category )
     {
-        Optional<Category> existed = this.categoryRepository.findById( id );
-        if( existed.isEmpty() ) {
+        Optional<Category> categoryFound = this.categoryRepository.findById( id );
+        if( categoryFound.isEmpty() ) {
             throw new DocumentNotFountException( id, "Category","ID" );
         }
 
-        Optional<Category> excitedName = this.categoryRepository.findByName( category.getName() );
-        if( excitedName.isPresent() && !existed.get().getName().equals( excitedName.get().getName() ) ) {
+        Optional<Category> categoryFoundByName = this.categoryRepository.findByName( category.getName() );
+        if( categoryFoundByName.isPresent() && !categoryFound.get().getName().equals( categoryFoundByName.get().getName() ) ) {
             throw new FieldAlreadyUsedException( "Name", "Category" );
         }
 
@@ -72,14 +72,14 @@ public class CategoryService implements ICategoryService
     @Transactional
     public Category delete( String id )
     {
-        Optional<Category> existed = this.categoryRepository.findById( id );
-        if( existed.isEmpty() || !existed.get().isStatus() ) {
+        Optional<Category> categoryFound = this.categoryRepository.findById( id );
+        if( categoryFound.isEmpty() || !categoryFound.get().getStatus() ) {
             throw new DocumentNotFountException( id, "Category", "ID" );
         }
-        existed.get().setUpdatedAt( LocalDateTime.now() );
-        existed.get().setStatus( false );
+        categoryFound.get().setUpdatedAt( LocalDateTime.now() );
+        categoryFound.get().setStatus( false );
 
-        return this.categoryRepository.save( existed.get() );
+        return this.categoryRepository.save( categoryFound.get() );
     }
 
     @Override

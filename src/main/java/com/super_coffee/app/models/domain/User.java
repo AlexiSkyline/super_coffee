@@ -25,7 +25,16 @@ public class User
     private String password;
     @DBRef
     private Collection<Role> roles = new ArrayList<>();
-    private boolean status = true;
+    private Boolean status = true;
     private LocalDateTime createdAt = LocalDateTime.now();
     private LocalDateTime updatedAt = LocalDateTime.now();
+
+    public Collection<Role> addRole( Role role ) {
+        boolean duplicateRole = this.roles.stream().anyMatch( rol -> rol.get_id().equals( role.get_id() ) );
+        if( !duplicateRole ) {
+            this.roles.add( role );
+        }
+
+        return this.roles;
+    }
 }
