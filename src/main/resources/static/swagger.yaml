@@ -1,0 +1,1006 @@
+openapi: 3.0.3
+info:
+  title: API Super Caffee - OpenAPI 3.0
+  description: Example of a Rest API where a CRUD is implemented around a cafeteria called super Cafe developed with Spring Boot and MongoDB.
+  version: 1.0.0
+  contact:
+    name: AlexiSkyline
+    email: ilegal_sprite@hotmail.com
+    url: https://github.com/AlexiSkyline
+servers:
+- url: http://localhost:8080/api/v1/
+tags:
+- name: Categories
+  description: This point manages all the information related to the Product Categories
+- name: Product
+  description: This point manages all the information related to the different products of the cafeteria.
+- name: Roles
+  description: This enpoint manages all the information related to the different Roles of the cafeteria Staff.
+- name: Users
+  description: This point manages all the information related to the cafeteria Staff.
+paths:
+# * EndPoints Category
+  /category:
+    post:
+      tags:
+      - Categories
+      summary: Create new Category to the DB
+      operationId: createCategory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                  description: Short role name
+        required: true
+      responses:
+        201:
+          description: (OK) Category information that has recently been Create
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Category'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    get:
+      tags:
+        - Categories
+      summary: Obtains the information of all active Categories
+      operationId: getAllCategory
+      responses:
+        200:
+          description: Total and list of all active Categories
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  totalDocuments:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /category/{id}:
+    get:
+      tags:
+      - Categories
+      summary: Gets the Category information by ID
+      parameters:
+        - $ref: '#/components/parameters/id'
+      operationId: getCategoryById
+      responses:
+        200:
+          description: (OK) Category information Get by the ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Category'
+        401:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags:
+      - Categories
+      summary: Update the information of a Category
+      parameters:
+        - $ref: '#/components/parameters/id'
+      operationId: updateCategory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+        required: true
+      responses:
+        201:
+          description: (OK) Category with new information updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Category'
+        401:
+          $ref: '#/components/responses/NotFound'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags:
+      - Categories
+      summary: Disable "Delete" a Category from the DB
+      parameters:
+        - $ref: '#/components/parameters/id'
+      operationId: deleteCategory
+      responses:
+        200:
+          description: (OK) Deleted Category information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Category'
+        401:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+# * EndPoints Category
+
+# * EndPoints Product
+  /product:
+    post:
+      tags:
+      - Product
+      summary: Create new Product to the DB
+      operationId: createProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Short Product name
+                price:
+                  type: number
+                  pattern: double
+                  description: Short Product name
+                description:
+                  type: string
+                  description: Product description
+        required: true
+      responses:
+        201:
+          description: (OK) Product information that has recently been Create
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Product'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    get:
+      tags:
+      - Product
+      summary: Obtains the information of all active Products
+      operationId: getAllProduct
+      responses:
+        200:
+          description: Total and list of all active Products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  totalDocuments:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /product/{id}:
+    get:
+      tags:
+      - Product
+      summary: Gets the Product information by ID
+      parameters:
+        - $ref: '#/components/parameters/id'
+      operationId: getProductById
+      responses:
+        200:
+          description: (OK) Product information Get by the ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Product'
+        401:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags:
+        - Product
+      summary: Update the information of a Product
+      parameters:
+        - $ref: '#/components/parameters/id'
+      operationId: updateProduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Short Product name
+                price:
+                  type: number
+                  pattern: double
+                  description: Short Product name
+                description:
+                  type: string
+                  description: Product description
+        required: true
+      responses:
+        201:
+          description: (OK) Product with new information updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Product'
+        401:
+          $ref: '#/components/responses/NotFound'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags:
+        - Product
+      summary: Disable "Delete" a Product from the DB
+      parameters:
+      - name: id
+        in: path
+        description: Product ID must be removed
+        required: true
+        schema:
+          type: string
+      operationId: deleteProduct
+      responses:
+        200:
+          description: (OK) Deleted Product information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Product'
+        401:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+# * EndPoints Product
+
+# * EndPoints Role
+  /role:
+    post:
+      tags:
+      - Roles
+      summary: Create new Category to the DB
+      operationId: createRole
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [description]
+              properties:
+                description:
+                  type: string
+                  description: Short role description
+        required: true
+      responses:
+        201:
+          description: (OK) Role information that has recently been Create
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Role'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    get:
+      tags:
+      - Roles
+      summary: Obtains the information of all active Roles
+      operationId: getAllRoles
+      responses:
+        200:
+          description: Total and list of all active Roles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  totalDocuments:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Role'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /role/{id}:
+    get:
+      tags:
+      - Roles
+      summary: Gets the Role information by ID
+      parameters:
+        - $ref: '#/components/parameters/id'
+      operationId: getRoleById
+      responses:
+        200:
+          description: (OK) Role information Get by the ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Role'
+        401:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags:
+        - Roles
+      summary: Update the information of a Role
+      parameters:
+        - $ref: '#/components/parameters/id'
+      operationId: updateRole
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [description]
+              properties:
+                description:
+                  type: string
+                  description: Short role description
+        required: true
+      responses:
+        201:
+          description: (OK) Role with new information updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Role'
+        401:
+          $ref: '#/components/responses/NotFound'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+      tags:
+        - Roles
+      summary: Disable "Delete" a Role from the DB
+      parameters:
+      - name: id
+        in: path
+        description: Role ID must be removed
+        required: true
+        schema:
+          type: string
+      operationId: deleteRole
+      responses:
+        200:
+          description: (OK) Deleted Role information
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/Role'
+        401:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+# * EndPoints Role
+
+# * EndPoints User
+  /user:
+    post:
+      tags:
+      - Users
+      summary: Create new User to the DB
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name,email,password]
+              properties:
+                name:
+                  type: string
+                  minLength: 4
+                  maxLength: 16
+                email:
+                  type: string
+                password:
+                  type: string
+                  minLength: 6
+                  maxLength: 16
+        required: true
+      responses:
+        201:
+          description: (OK) User information that has recently been Create
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/ServerError'
+    get:
+      tags:
+        - Users
+      summary: Obtains the information of all active Users
+      operationId: getAllUsers
+      responses:
+        200:
+          description: Total and list of all active Users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  totalDocuments:
+                    type: integer
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+  /user/{id}:
+    get:
+      tags:
+      - Users
+      summary: Gets the Role information by ID
+      parameters:
+        - $ref: '#/components/parameters/id'
+      operationId: getUserById
+      responses:
+        200:
+          description: (OK) User information Get by the ID
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    put:
+      tags:
+        - Users
+      summary: Update the information of a User
+      parameters:
+        - $ref: '#/components/parameters/id'
+      operationId: updateUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name,email,password]
+              properties:
+                name:
+                  type: string
+                  minLength: 4
+                  maxLength: 16
+                email:
+                  type: string
+                password:
+                  type: string
+                  minLength: 6
+                  maxLength: 16
+        required: true
+      responses:
+        201:
+          description: (OK) User with new information updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/User'
+        401:
+          $ref: '#/components/responses/NotFound'
+        409:
+          $ref: '#/components/responses/Conflict'
+        500:
+          $ref: '#/components/responses/ServerError'
+
+    delete:
+        tags:
+        - Users
+        summary: Disable "Delete" a User from the DB
+        parameters:
+        - $ref: '#/components/parameters/id'
+        operationId: deleteUser
+        responses:
+          200:
+            description: (OK) Deleted Role information
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    timeStamp:
+                      type: string
+                    httpCode:
+                      type: integer
+                    httpStatus:
+                      type: string
+                    message:
+                      type: string
+                    data:
+                      $ref: '#/components/schemas/Role'
+          401:
+            $ref: '#/components/responses/NotFound'
+          500:
+            $ref: '#/components/responses/ServerError'
+
+  /user/add-role/{id}:
+    put:
+      tags:
+        - Users
+      summary: Add new Roles to a User
+      parameters:
+        - $ref: '#/components/parameters/id'
+      operationId: addRoleUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                  _id:
+                    type: string
+                    description: Unique identifier
+                  description:
+                    type: string
+                    description: Short role description
+        required: true
+      responses:
+        201:
+          description: (OK) User information with added roles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  timeStamp:
+                    type: string
+                  httpCode:
+                    type: integer
+                  httpStatus:
+                    type: string
+                  message:
+                    type: string
+                  data:
+                    $ref: '#/components/schemas/User'
+        400:
+          $ref: '#/components/responses/BadRequest'
+        401:
+          $ref: '#/components/responses/NotFound'
+        500:
+          $ref: '#/components/responses/ServerError'
+# * EndPoints User
+
+components:
+  responses:
+    BadRequest:
+      description: (BadRequest) The submitted data is incorrect or there are mandatory data not submitted.
+      content:
+        application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionModel'
+    Conflict:
+      description: (Conflict) When a single field sends you information that is already being used by another document.
+      content:
+        application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionModel'
+    ServerError:
+      description: Server error
+
+    NotFound:
+      description: (NotFound) Document information not found
+      content:
+        application/json:
+              schema:
+                $ref: '#/components/schemas/ExceptionModel'
+
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: ID of the Document
+
+  schemas:
+    Category:
+      type: object
+      required: [name]
+      properties:
+        _id:
+          type: string
+          description: Unique identifier
+          readOnly: true
+          uniqueItems: true
+        name:
+          type: string
+          description: Short Category name
+          uniqueItems: true
+          minLength: 4
+          maxLength: 16
+        status:
+          type: boolean
+          description: Current status of the Category
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          description: Date last updated
+          readOnly: true
+
+    Product:
+      type: object
+      required: [name,price,description]
+      properties:
+        _id:
+          type: string
+          description: Unique identifier
+          readOnly: true
+          uniqueItems: true
+        name:
+          type: string
+          description: Short Product name
+          minLength: 4
+          maxLength: 16
+        price:
+          type: number
+          pattern: double
+          description: Short Product name
+        description:
+          type: string
+          description: Product description
+          minLength: 5
+          maxLength: 25
+        status:
+          type: boolean
+          description: Current status of the Product
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          description: Date last updated
+          readOnly: true
+
+    Role:
+      type: object
+      required: [description]
+      properties:
+        _id:
+          type: string
+          description: Unique identifier
+          readOnly: true
+          uniqueItems: true
+        description:
+          type: string
+          description: Short Role description
+          uniqueItems: true
+        status:
+          type: boolean
+          description: Current status of the Role
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          description: Date last updated
+          readOnly: true
+
+    User:
+      type: object
+      required: [name,email,password]
+      properties:
+        _id:
+          type: string
+          description: Unique identifier
+          readOnly: true
+          uniqueItems: true
+        name:
+          type: string
+          minLength: 4
+          maxLength: 16
+        email:
+          type: string
+          uniqueItems: true
+        password:
+          type: string
+          minLength: 6
+          maxLength: 16
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/Role'
+        status:
+          type: boolean
+          description: Current status of the User
+          readOnly: true
+        createdAt:
+          type: string
+          format: date-time
+          description: Creation date
+          readOnly: true
+        updatedAt:
+          type: string
+          format: date-time
+          description: Date last updated
+          readOnly: true
+
+    ExceptionModel:
+      type: object
+      properties:
+        timeStamp:
+          type: string
+        httpError:
+          type: integer
+        httpStatus:
+          type: string
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+                description: Short description of the error
+              param:
+                type: string
+                description: Parameter where the error originates
+              location:
+                type: string
+                description: Where the error is being sent
+          description: List of errors
